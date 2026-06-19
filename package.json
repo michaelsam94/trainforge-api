@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev --port 2020",
+    "build": "tsc --noEmit",
     "deploy": "wrangler deploy -c wrangler.production.toml",
     "deploy:production": "wrangler deploy -c wrangler.production.toml",
     "typecheck": "tsc --noEmit",
