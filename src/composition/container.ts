@@ -6,6 +6,7 @@ import {
   GeneratePlanUseCase,
   GetCurrentPlanUseCase,
   GetPlanByIdUseCase,
+  ResetCurrentPlanUseCase,
 } from "@/application/use-cases/PlanUseCases";
 import { DeleteAccountUseCase } from "@/application/use-cases/DeleteAccountUseCase";
 import { RegisterUserUseCase } from "@/application/use-cases/RegisterUserUseCase";
@@ -128,6 +129,7 @@ export function createContainer(env: Env) {
   const generatePlan = new GeneratePlanUseCase(plans, onboarding, planGenerator);
   const buildManualPlan = new BuildManualPlanUseCase(plans, onboarding, exercises);
   const getCurrentPlan = new GetCurrentPlanUseCase(plans);
+  const resetCurrentPlan = new ResetCurrentPlanUseCase(plans);
   const getPlanById = new GetPlanByIdUseCase(plans);
   const logWorkout = new LogWorkoutUseCase(workouts, plans);
   const completeWorkout = new CompleteWorkoutUseCase(workouts);
@@ -181,6 +183,7 @@ export function createContainer(env: Env) {
     generatePlan,
     buildManualPlan,
     getCurrentPlan,
+    resetCurrentPlan,
     getPlanById,
     logWorkout,
     completeWorkout,

@@ -132,6 +132,15 @@ export class GetCurrentPlanUseCase {
   }
 }
 
+export class ResetCurrentPlanUseCase {
+  constructor(private readonly plans: IPlanRepository) {}
+
+  async execute(userId: string): Promise<Result<{ deleted: boolean }, DomainError>> {
+    const deleted = await this.plans.deleteCurrentByUserId(userId);
+    return ok({ deleted });
+  }
+}
+
 export class GetPlanByIdUseCase {
   constructor(private readonly plans: IPlanRepository) {}
 

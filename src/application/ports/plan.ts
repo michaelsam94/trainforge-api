@@ -15,6 +15,7 @@ export interface IPlanRepository {
     planDayId: string,
     userId: string,
   ): Promise<{ planId: string; day: import("@/domain/plan").WorkoutDay; plan: import("@/domain/plan").TrainingPlan } | null>;
+  deleteCurrentByUserId(userId: string): Promise<boolean>;
 }
 
 export interface IOnboardingReader {

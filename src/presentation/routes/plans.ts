@@ -87,6 +87,18 @@ planRoutes.get("/current/week", requireAuth(), async (c) => {
   return c.json({ plan: toWeekPlanDto(result.value) });
 });
 
+planRoutes.delete("/current", requireAuth(), async (c) => {
+  const container = c.get("container");
+  const user = c.get("currentUser");
+  const result = await container.resetCurrentPlan.execute(user.id);
+
+  if (isErr(result)) {
+    throw result.error;
+  }
+
+  return c.json({ deleted: result.value.deleted });
+});
+
 planRoutes.patch(
   "/current/adapt",
   requireAuth(),

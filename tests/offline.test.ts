@@ -134,6 +134,10 @@ class MemoryPlanRepository implements IPlanRepository {
     };
     return { planId: plan.id, day: this.day, plan };
   }
+
+  async deleteCurrentByUserId() {
+    return false;
+  }
 }
 
 describe("SyncOfflineWorkoutsUseCase", () => {

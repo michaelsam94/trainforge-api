@@ -64,6 +64,13 @@ class MemoryPlanRepository implements IPlanRepository {
     }
     return null;
   }
+
+  async deleteCurrentByUserId(userId: string) {
+    const current = await this.findCurrentByUserId(userId);
+    if (!current) return false;
+    this.plans.delete(current.id);
+    return true;
+  }
 }
 
 class MemoryOnboardingReader implements IOnboardingReader {

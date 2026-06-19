@@ -119,6 +119,10 @@ class MemoryPlanRepository implements IPlanRepository {
     if (!day) return null;
     return { planId: this.plan.id, day, plan: this.plan };
   }
+
+  async deleteCurrentByUserId() {
+    return true;
+  }
 }
 
 class MemoryPlanAdapter implements IPlanAdapter {

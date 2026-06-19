@@ -145,6 +145,18 @@ export class D1PlanRepository implements IPlanRepository {
     return this.hydratePlan(plan);
   }
 
+  async deleteCurrentByUserId(userId: string): Promise<boolean> {
+    const current = await this.findCurrentByUserId(userId);
+    if (!current) return false;
+
+    await this.db
+      .prepare("DELETE FROM plans WHERE id = ? AND user_id = ?")
+      .bind(current.id, userId)
+      .run();
+
+    return true;
+  }
+
   async findDayById(
     planDayId: string,
     userId: string,
