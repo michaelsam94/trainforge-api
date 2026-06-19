@@ -8,6 +8,8 @@ Use these in the Workers **Build** configuration when the repo is connected to G
 | **Build command** | `npm run build` |
 | **Deploy command** | `npx wrangler deploy -c wrangler.production.toml` |
 
+**Important:** Do **not** use plain `npx wrangler deploy` — the default `wrangler.toml` is for local dev only. Production bindings (D1, KV, queues) live in `wrangler.production.toml`.
+
 Or a single combined command:
 
 ```bash

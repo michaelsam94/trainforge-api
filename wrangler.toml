@@ -16,9 +16,10 @@ migrations_dir = "migrations"
 binding = "CACHE"
 id = "local-dev-cache-placeholder"
 
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "trainforge-media"
+# R2 optional — enable in dashboard before uncommenting (see wrangler.production.toml).
+# [[r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "trainforge-media"
 
 # Uncomment for production async plan generation
 [[queues.producers]]
