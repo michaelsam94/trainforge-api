@@ -87,7 +87,25 @@ export class D1WorkoutRepository implements IWorkoutRepository {
     return row ? this.hydrate(row) : null;
   }
 
+  private async findBySetIdempotencyKey(userId: string, idempotencyKey: string): Promise<WorkoutLog | null> {
+    const row = await this.db
+      .prepare(
+        `SELECT sl.workout_log_id AS workoutLogId
+         FROM set_logs sl
+         INNER JOIN workout_logs wl ON wl.id = sl.workout_log_id
+         WHERE wl.user_id = ? AND sl.idempotency_key = ?
+         LIMIT 1`,
+      )
+      .bind(userId, idempotencyKey)
+      .first<{ workoutLogId: string }>();
+
+    return row ? this.findById(row.workoutLogId, userId) : null;
+  }
+
   async logSet(input: LogSetInput, planId: string): Promise<WorkoutLog> {
+    const idempotentSet = await this.findBySetIdempotencyKey(input.userId, input.idempotencyKey);
+    if (idempotentSet) return idempotentSet;
+
     const existingByKey = await this.findByIdempotencyKey(input.userId, input.idempotencyKey);
     if (existingByKey) return existingByKey;
 
