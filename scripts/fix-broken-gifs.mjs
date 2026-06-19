@@ -22,7 +22,7 @@ function sqlEscape(value) {
 
 async function main() {
   const remote = process.argv.includes("--remote");
-  const target = remote ? "--remote -c wrangler.production.toml" : "--local";
+  const target = remote ? "--remote" : "--local -c wrangler.dev.toml";
 
   const payload = JSON.parse(await readFile(BROKEN_FILE, "utf8"));
   const ids = payload.broken.map((item) => item.id);

@@ -152,7 +152,7 @@ async function fetchAllExercises(existing = [], resumeCursor = null) {
 }
 
 async function importToD1(exercises, remote = false) {
-  const target = remote ? "--remote -c wrangler.production.toml" : "--local";
+  const target = remote ? "--remote" : "--local -c wrangler.dev.toml";
   const statements = exercises.map((exercise) => {
     const instructions = JSON.stringify(exercise.instructions ?? []);
     const equipments = JSON.stringify(exercise.equipments ?? []);

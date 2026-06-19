@@ -85,7 +85,7 @@ async function main() {
     const chunk = statements.slice(i, i + chunkSize).join("\n");
     const sqlFile = path.join(API_ROOT, "data", "exrx", `_import_${i}.sql`);
     await import("node:fs/promises").then((fs) => fs.writeFile(sqlFile, chunk, "utf8"));
-    execSync(`npx wrangler d1 execute trainforge-db --local --file=${sqlFile}`, {
+    execSync(`npx wrangler d1 execute trainforge-db --local -c wrangler.dev.toml --file=${sqlFile}`, {
       cwd: API_ROOT,
       stdio: "inherit",
     });

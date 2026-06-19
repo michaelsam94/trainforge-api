@@ -1,4 +1,4 @@
-# Alias of wrangler.toml — kept for backward compatibility with -c wrangler.production.toml
+# Local development — use: wrangler dev -c wrangler.dev.toml
 
 name = "trainforge-api"
 main = "src/worker.ts"
@@ -6,18 +6,22 @@ compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-ENVIRONMENT = "production"
-APP_URL = "https://trainforge.pages.dev"
+ENVIRONMENT = "development"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "trainforge-db"
-database_id = "4bc2cff2-ba91-4da7-a30a-6498c0ce7d81"
+database_id = "local-dev-placeholder"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "99cfd606c42b4f989ee525e2cc04f792"
+id = "local-dev-cache-placeholder"
+
+# R2 optional — enable in dashboard before uncommenting.
+# [[r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "trainforge-media"
 
 [[queues.producers]]
 binding = "PLAN_QUEUE"
@@ -27,8 +31,8 @@ queue = "plan-generation"
 queue = "plan-generation"
 max_batch_size = 1
 
+[dev]
+port = 2020
+
 [triggers]
 crons = ["0 */6 * * *"]
-
-# R2 binding omitted until R2 is enabled on the Cloudflare account.
-# Secrets via: wrangler secret put ANTHROPIC_API_KEY -c wrangler.production.toml

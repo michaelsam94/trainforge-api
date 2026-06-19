@@ -1,27 +1,24 @@
+# Production Worker (default for deploy + Cloudflare CI)
+
 name = "trainforge-api"
 main = "src/worker.ts"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
+APP_URL = "https://trainforge.pages.dev"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "trainforge-db"
-database_id = "local-dev-placeholder"
+database_id = "4bc2cff2-ba91-4da7-a30a-6498c0ce7d81"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "local-dev-cache-placeholder"
+id = "99cfd606c42b4f989ee525e2cc04f792"
 
-# R2 optional — enable in dashboard before uncommenting (see wrangler.production.toml).
-# [[r2_buckets]]
-# binding = "MEDIA"
-# bucket_name = "trainforge-media"
-
-# Uncomment for production async plan generation
 [[queues.producers]]
 binding = "PLAN_QUEUE"
 queue = "plan-generation"
@@ -30,10 +27,8 @@ queue = "plan-generation"
 queue = "plan-generation"
 max_batch_size = 1
 
-[dev]
-port = 2020
-
 [triggers]
 crons = ["0 */6 * * *"]
 
-# Local dev runs plan jobs inline when queue consumer is unavailable
+# R2 binding omitted until R2 is enabled on the Cloudflare account.
+# Secrets via: wrangler secret put ANTHROPIC_API_KEY
