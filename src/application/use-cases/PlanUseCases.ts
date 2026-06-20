@@ -114,6 +114,7 @@ export class BuildManualPlanUseCase {
       mode: input.mode,
       bodyParts: input.bodyParts,
       exercisesByBodyPart,
+      seed: `${input.userId}:${weekStart}:${crypto.randomUUID()}`,
     });
 
     const { id } = await this.plans.createGenerating(input.userId, weekStart);

@@ -18,6 +18,7 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 export type ManualPlanMode = "catalog" | "body_parts";
 
 export type BuildCatalogPlanInput = {
+  seed?: string;
   profile: OnboardingProfile;
   mode: ManualPlanMode;
   bodyParts?: string[];
@@ -51,19 +52,37 @@ function toPlanExercise(exercise: ExerciseRecord, profile: OnboardingProfile): P
   };
 }
 
+function hashSeed(seed: string): number {
+  let hash = 2166136261;
+  for (const char of seed) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function rotatePool(pool: ExerciseRecord[], seed: string, salt: string): ExerciseRecord[] {
+  if (pool.length <= 1) return pool;
+  const offset = hashSeed(`${seed}:${salt}`) % pool.length;
+  return [...pool.slice(offset), ...pool.slice(0, offset)];
+}
+
 function pickExercisesForDay(
   bodyPart: BodyPart,
   exercisesByBodyPart: Map<string, ExerciseRecord[]>,
   profile: OnboardingProfile,
   count: number,
+  seed: string,
+  dayIndex: number,
 ): PlanExercise[] {
   const pool = exercisesByBodyPart.get(bodyPart) ?? [];
   if (!pool.length) {
-    const fallback = [...exercisesByBodyPart.values()].flat().slice(0, count);
+    const fallbackPool = [...exercisesByBodyPart.values()].flat();
+    const fallback = rotatePool(fallbackPool, seed, `fallback-${String(dayIndex)}`).slice(0, count);
     return fallback.map((exercise) => toPlanExercise(exercise, profile));
   }
 
-  return pool.slice(0, count).map((exercise) => toPlanExercise(exercise, profile));
+  return rotatePool(pool, seed, `${bodyPart}-${String(dayIndex)}`).slice(0, count).map((exercise) => toPlanExercise(exercise, profile));
 }
 
 export function buildCatalogPlan(input: BuildCatalogPlanInput): GeneratedPlan {
@@ -87,7 +106,7 @@ export function buildCatalogPlan(input: BuildCatalogPlanInput): GeneratedPlan {
       title: `${label} — ${bodyPart}`,
       focus: `Manual plan · ${bodyPart}`,
       estimatedMinutes: profile.sessionMinutes,
-      exercises: pickExercisesForDay(bodyPart, exercisesByBodyPart, profile, 4),
+      exercises: pickExercisesForDay(bodyPart, exercisesByBodyPart, profile, 4, input.seed ?? "catalog", index),
     };
   });
 
