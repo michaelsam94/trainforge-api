@@ -7,6 +7,14 @@ import {
 } from "@/domain/plan";
 import type { IPlanRepository } from "@/application/ports/plan";
 
+const MAX_PLAN_EXERCISE_SETS = 5;
+
+function normalizePlanExerciseSets(value: number | null | undefined): number {
+  if (!Number.isFinite(value) || value == null) return 3;
+  return Math.min(MAX_PLAN_EXERCISE_SETS, Math.max(1, Math.trunc(value)));
+}
+
+
 type PlanRow = {
   id: string;
   user_id: string;
@@ -95,7 +103,7 @@ export class D1PlanRepository implements IPlanRepository {
             exercise.id,
             day.id,
             exercise.name,
-            exercise.sets ?? null,
+            normalizePlanExerciseSets(exercise.sets) ?? null,
             exercise.reps ?? null,
             exercise.durationSeconds ?? null,
             exercise.notes ?? null,
@@ -210,7 +218,7 @@ export class D1PlanRepository implements IPlanRepository {
         exercises: exerciseRows.results.map((exercise) => ({
           id: exercise.id,
           name: exercise.name,
-          sets: exercise.sets ?? undefined,
+          sets: normalizePlanExerciseSets(exercise.sets) ?? undefined,
           reps: exercise.reps ?? undefined,
           durationSeconds: exercise.duration_seconds ?? undefined,
           notes: exercise.notes ?? undefined,
