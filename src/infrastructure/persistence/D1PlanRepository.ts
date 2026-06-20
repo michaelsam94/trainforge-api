@@ -14,6 +14,16 @@ function normalizePlanExerciseSets(value: number | null | undefined): number {
   return Math.min(MAX_PLAN_EXERCISE_SETS, Math.max(1, Math.trunc(value)));
 }
 
+function parseJsonStringArray(value: string | null | undefined): string[] | undefined {
+  if (!value) return undefined;
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string" && item.length > 0) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 
 type PlanRow = {
   id: string;
@@ -45,6 +55,11 @@ type ExerciseRow = {
   duration_seconds: number | null;
   notes: string | null;
   sort_order: number;
+  image_url: string | null;
+  instructions_json: string | null;
+  equipments_json: string | null;
+  muscle_group: string | null;
+  difficulty: string | null;
 };
 
 export class D1PlanRepository implements IPlanRepository {
@@ -202,8 +217,12 @@ export class D1PlanRepository implements IPlanRepository {
     for (const dayRow of dayRows.results) {
       const exerciseRows = await this.db
         .prepare(
-          `SELECT id, plan_day_id, name, sets, reps, duration_seconds, notes, sort_order
-           FROM plan_exercises WHERE plan_day_id = ? ORDER BY sort_order ASC`,
+          `SELECT pe.id, pe.plan_day_id, pe.name, pe.sets, pe.reps, pe.duration_seconds, pe.notes, pe.sort_order,
+                  COALESCE(e.video_url, e.thumbnail_url) AS image_url, e.instructions_json, e.equipments_json, e.muscle_group, e.difficulty
+           FROM plan_exercises pe
+           LEFT JOIN exercises e ON e.id = pe.id
+           WHERE pe.plan_day_id = ?
+           ORDER BY pe.sort_order ASC`,
         )
         .bind(dayRow.id)
         .all<ExerciseRow>();
@@ -222,6 +241,11 @@ export class D1PlanRepository implements IPlanRepository {
           reps: exercise.reps ?? undefined,
           durationSeconds: exercise.duration_seconds ?? undefined,
           notes: exercise.notes ?? undefined,
+          imageUrl: exercise.image_url ?? undefined,
+          instructions: parseJsonStringArray(exercise.instructions_json),
+          equipments: parseJsonStringArray(exercise.equipments_json),
+          muscleGroup: exercise.muscle_group ?? undefined,
+          difficulty: exercise.difficulty ?? undefined,
         })),
       });
     }

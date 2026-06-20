@@ -19,6 +19,12 @@ export function toWeekPlanDto(plan: TrainingPlan) {
               sets: exercise.sets,
               reps: exercise.reps,
               durationSeconds: exercise.durationSeconds,
+              notes: exercise.notes,
+              imageUrl: exercise.imageUrl,
+              instructions: exercise.instructions,
+              equipments: exercise.equipments,
+              muscleGroup: exercise.muscleGroup,
+              difficulty: exercise.difficulty,
             })),
           }))
         : [],

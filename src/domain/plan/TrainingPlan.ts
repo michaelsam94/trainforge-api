@@ -8,6 +8,11 @@ export const planExerciseSchema = z.object({
   reps: z.string().max(40).optional(),
   durationSeconds: z.number().int().min(1).max(7200).optional(),
   notes: z.string().max(300).optional(),
+  imageUrl: z.string().url().nullable().optional(),
+  instructions: z.array(z.string()).optional(),
+  equipments: z.array(z.string()).optional(),
+  muscleGroup: z.string().nullable().optional(),
+  difficulty: z.string().nullable().optional(),
 });
 
 export const generatedWorkoutDaySchema = z.object({
